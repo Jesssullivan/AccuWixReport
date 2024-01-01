@@ -4,7 +4,11 @@
 accuwix_venv
 output
 
+***/*.pyc
+
 **/.idea
+.idea
+
 **/*.csv
 **/*.pdf
 

@@ -18,7 +18,7 @@ ACUITY_REPORT = read_csv(ACUITY_REPORT_PATH)
 WIX_REPORT = read_csv(WIX_REPORT_PATH)
 
 # create wix subset:
-WIX_SUBSET = WIX_REPORT[["Billing name", "Contact email", "Date", "Item", "Total after refund", "Fulfillment status"]]
+WIX_SUBSET = WIX_REPORT[["Billing name", "Contact email", "Date", "Item", "Total after refund", "Fulfillment status", "Payment status"]]
 ACUITY_SUBSET = ACUITY_REPORT[["First Name", "Last Name", "Email", "Type", "End Time", "Appointment Price", "Paid?"]]
 
 return_shape = {"data": pd.DataFrame,
@@ -60,7 +60,7 @@ def create_unpaid_report(date="Jul") -> return_shape:
 
     # Wix:
     WIX_SUBSET_DATE = WIX_SUBSET[WIX_SUBSET["Date"].str.contains(date, na=True)]
-    WIX_SUBSET_DATE_UNPAID = WIX_SUBSET_DATE[WIX_SUBSET_DATE["Fulfillment status"] != "Fulfilled"]
+    WIX_SUBSET_DATE_UNPAID = WIX_SUBSET_DATE[WIX_SUBSET_DATE["Payment status"] != "Paid"]
 
     # add email:
     acuity_unpaid_df["Email"] = ACUITY_SUBSET_DATE_UNPAID["Email"]
@@ -135,7 +135,7 @@ def create_paid_report(date="Jul") -> return_shape:
     # Wix:
     WIX_SUBSET_DATE = WIX_SUBSET[WIX_SUBSET["Date"].str.contains(date, na=True)]
     WIX_SUBSET_DATE_ZERO = WIX_SUBSET_DATE[WIX_SUBSET_DATE["Total after refund"].astype('float') > .1]
-    WIX_SUBSET_DATE_PAID = WIX_SUBSET_DATE_ZERO[WIX_SUBSET_DATE_ZERO["Fulfillment status"] == "Fulfilled"]
+    WIX_SUBSET_DATE_PAID = WIX_SUBSET_DATE_ZERO[WIX_SUBSET_DATE_ZERO["Payment status"] == "Paid"]
 
     # add clients:
     acuity_paid_df["Client"] = ACUITY_SUBSET_DATE_PAID["First Name"] + " " + ACUITY_SUBSET_DATE_PAID["Last Name"]
